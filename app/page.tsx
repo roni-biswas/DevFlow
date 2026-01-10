@@ -1,4 +1,6 @@
+import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
+import events from "@/lib/constants";
 
 export default function Home() {
   return (
@@ -10,6 +12,18 @@ export default function Home() {
         Hackathons, Meetups, and Conferences, All in One Place
       </p>
       <ExploreBtn />
+
+      <div className="mt-20 space-y-7">
+        <h3>Featured Events</h3>
+
+        <ul className="events list-none">
+          {events.map((event, index) => (
+            <li key={index}>
+              <EventCard {...event} />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

@@ -119,26 +119,25 @@ const EventSchema = new Schema<EventDocument>(
  * - Ensures time consistency (HH:mm)
  * - Validates required non-empty fields
  */
-EventSchema.pre<EventDocument>("save", function (next) {
+EventSchema.pre("save", function () {
+  // Generate slug only when title changes
   if (this.isModified("title")) {
     this.slug = generateSlug(this.title);
   }
 
-  // Normalize date to ISO format
+  // Normalize date to ISO (YYYY-MM-DD)
   const parsedDate = new Date(this.date);
   if (Number.isNaN(parsedDate.getTime())) {
-    return next(new Error("Invalid date format"));
+    throw new Error("Invalid date format");
   }
   this.date = parsedDate.toISOString().split("T")[0];
 
   // Normalize time (HH:mm)
   const timeMatch = this.time.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
   if (!timeMatch) {
-    return next(new Error("Invalid time format. Expected HH:mm"));
+    throw new Error("Invalid time format. Expected HH:mm");
   }
   this.time = timeMatch[0];
-
-  next();
 });
 
 /**

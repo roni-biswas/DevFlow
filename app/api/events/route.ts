@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
   try {
     await connectMongoDB();
     const formData = await req.formData();
-    let event;
+    let events;
     try {
-      event = Object.fromEntries(formData.entries());
+      events = Object.fromEntries(formData.entries());
     } catch (e) {
       return NextResponse.json(
         { message: "Invalid JSON data format" },
@@ -39,13 +39,13 @@ export async function POST(req: NextRequest) {
         .end(buffer);
     });
 
-    event.image = (uploadResult as { secure_url: string }).secure_url;
+    events.image = (uploadResult as { secure_url: string }).secure_url;
 
-    const createEvent = await Event.create(event);
+    const createEvent = await Event.create(events);
     return NextResponse.json(
       {
         message: "Event created successfully!",
-        event: createEvent,
+        events: createEvent,
       },
       { status: 201 }
     );
@@ -64,9 +64,9 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   try {
     await connectMongoDB();
-    const event = await Event.find().sort({ createdAt: -1 });
+    const events = await Event.find().sort({ createdAt: -1 });
     return NextResponse.json(
-      { message: "Events fetched successfully", event },
+      { message: "Events fetched successfully", events },
       { status: 200 }
     );
   } catch (e) {
